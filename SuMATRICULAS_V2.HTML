@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrícula Ficticia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        #matricula {
+            font-size: 2rem;
+            margin: 20px 0;
+            padding: 10px;
+            width: 300px;
+            height: 100px;
+            background-image: url('https://image.spreadshirtmedia.net/image-server/v1/compositions/T993A1PA2181PT1X42Y83D174236976W15600H3424/views/1,width=550,height=550,appearanceId=1,backgroundColor=FFFFFF,noPt=true/matricula-en-blanco-larga-ue-alfombrilla-de-raton.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 0; /* Eliminar margen inferior */
+        }
+        #contador {
+            font-size: 1.5rem;
+            color: red;
+            margin: 0; /* Eliminar margen superior e inferior */
+        }
+        #resultado {
+            margin-top: 10px; /* Ajustar margen superior */
+            font-size: 1.5rem;
+            display: none; /* Ocultar inicialmente */
+        }
+        img {
+            width: 90%;
+            max-width: 500px;
+            height: auto; /* Mantener proporción */
+            margin: 0; /* Eliminar márgenes */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Matrícula Ficticia</h1>
+    <div id="matricula"></div>
+    <div id="contador"></div>
+    <div id="resultado"></div>
+    <div id="imagenes"></div>
+
+    <script>
+        let tiempoRestante;
+        let intervalo;
+        let contadorMatriculas = 0;
+        const imagenes = [
+            "https://movienetworkpr.com/wp-content/uploads/2017/03/17309421_1476982679000223_5437388114441862392_n.jpg",
+            "https://movienetworkpr.com/wp-content/uploads/2017/03/17309450_10154542746339150_5048074161200876205_n.jpg",
+            "https://movienetworkpr.com/wp-content/uploads/2017/03/17390606_10154974119660540_6964713428463496943_o.jpg",
+            "https://movienetworkpr.com/wp-content/uploads/2017/03/17458083_10155241214943313_4702385568014820651_n.jpg",
+            "https://movienetworkpr.com/wp-content/uploads/2017/03/17498549_10154105312656157_1829436002359538465_n.jpg",
+            "https://movienetworkpr.com/wp-content/uploads/2017/03/mantis.jpg",
+            "https://movienetworkpr.com/wp-content/uploads/2017/03/nebula.jpg",
+            "https://www.mubis.es/media/users/14735/314738/guardians-of-the-galaxy-volume-3-posters-individuales-l_cover.jpg",
+            "https://erikstore.com/12034-large_default/poster-guardianes-de-la-galaxia-vol2-groot.jpg",
+            "https://cinembrollos.com/wp-content/uploads/2014/07/guardians_of_the_galaxy_ver13_xlg.jpg",
+            "https://cinembrollos.com/wp-content/uploads/2014/07/guardians_of_the_galaxy_ver12.jpg",
+            "https://cinembrollos.com/wp-content/uploads/2014/07/guardians_of_the_galaxy_ver11.jpg",
+            "https://cinembrollos.com/wp-content/uploads/2014/07/guardians_of_the_galaxy_ver11.jpg",
+            "https://cinembrollos.com/wp-content/uploads/2014/07/guardians_of_the_galaxy_ver10.jpg",
+            "https://cinembrollos.com/wp-content/uploads/2014/07/guardians_of_the_galaxy_ver9_xlg.jpg",
+            "https://cinembrollos.com/wp-content/uploads/2014/06/guardians_of_the_galaxy_ver4_xlg.jpg",
+            "https://cinembrollos.com/wp-content/uploads/2014/06/guardians_of_the_galaxy_ver5_xlg.jpg",
+            "https://m.media-amazon.com/images/I/71pn3JS7ZRL._AC_SL1068_.jpg",
+            "https://m.media-amazon.com/images/I/61nO9UiHueL._AC_SL1200_.jpg",
+            "https://static.posters.cz/image/750/posters/guardianes-de-la-galaxia-volumen-2-characters-in-space-i40499.jpg"
+        ];
+
+        function generarMatricula() {
+            // Generar 4 dígitos aleatorios
+            const digitos = Math.floor(1000 + Math.random() * 9000).toString();
+            // Generar 3 letras aleatorias
+            const letras = Array.from(Array(3), () => String.fromCharCode(65 + Math.floor(Math.random() * 26))).join('');
+            // Mostrar la matrícula en pantalla con dos espacios entre los dígitos y las letras
+            document.getElementById('matricula').textContent = `${digitos}  ${letras}`;
+            return digitos;
+        }
+
+        function contarAtras(segundos) {
+            const contador = document.getElementById('contador');
+            tiempoRestante = segundos;
+            return new Promise((resolve) => {
+                intervalo = setInterval(() => {
+                    if (document.visibilityState === 'visible') {
+                        contador.textContent = `Tiempo restante: ${tiempoRestante} segundos`;
+                        tiempoRestante--;
+                    }
+                    if (tiempoRestante < 0) {
+                        clearInterval(intervalo);
+                        contador.textContent = '';
+                        resolve();
+                    }
+                }, 1000);
+            });
+        }
+
+        function reducirTiempo() {
+            if (tiempoRestante > 0) {
+                tiempoRestante--; // Reducir un segundo si se hace clic
+            }
+        }
+
+        function sumarDigitos(digitos) {
+            // Sumar los 4 dígitos
+            return digitos.split('').reduce((acc, num) => acc + parseInt(num), 0);
+        }
+
+        function mostrarImagenAleatoria() {
+            const imagenSeleccionada = imagenes[Math.floor(Math.random() * imagenes.length)];
+            const imgContainer = document.getElementById('imagenes');
+            imgContainer.innerHTML = `<img src="${imagenSeleccionada}" alt="Imagen Aleatoria">`;
+        }
+
+        async function iniciar() {
+            // Limpiar el resultado anterior
+            document.getElementById('resultado').style.display = 'none'; // Ocultar el resultado
+            const digitos = generarMatricula();
+            await contarAtras(10);
+            const suma = sumarDigitos(digitos);
+            const resultado = document.getElementById('resultado');
+            resultado.textContent = `La suma de los dígitos es: ${suma}`;
+            resultado.style.display = 'block'; // Mostrar el resultado
+
+            contadorMatriculas++;
+            if (contadorMatriculas % 5 === 0) {
+                mostrarImagenAleatoria(); // Mostrar nueva imagen cada 5 matrículas
+            }
+
+            setTimeout(() => {
+                iniciar(); // Iniciar una nueva matrícula tras 2 segundos
+            }, 2000);
+        }
+
+        // Pausar temporizador si la página no está visible
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                clearInterval(intervalo); // Pausar temporizador si la página está en segundo plano
+            } else {
+                contarAtras(tiempoRestante); // Reanudar el temporizador si la página vuelve a estar visible
+            }
+        });
+
+        // Hacer que el contador se reduzca al hacer clic
+        document.addEventListener('click', reducirTiempo);
+
+        // Iniciar el proceso al cargar la página
+        iniciar();
+    </script>
+
+</body>
+</html>
